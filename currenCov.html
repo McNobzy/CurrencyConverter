@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <script type="text/javascript" src="currenCov.js">
+    fetch('http://free.currencyconverterapi.com/api/v5/currencies')
+    .then(response => {
+      return response.json();
+    })
+    .then(currencies => {
+      // const output = '';
+
+        console.log(currencies);
+      //	document.getElementById('demo').innerHTML = JSON.stringify(currencies);
+
+      // }
+      // document.getElementById('fromCurrency').innerHTML.value = output;
+      //console.log(currencies.results);
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Currency Converter</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="/css/style.css">
+
+	<script type="text/javascript" src="/lib/idb.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+	<script>
+		function registerServiceWorker(){
+					if ('serviceWorker' in navigator) {
+		  // Register a service worker hosted at the root of the
+		  // site using the default scope.
+			navigator.serviceWorker.register('/sw.js').then(function(registration) {
+						console.log('Service worker registration succeeded:', registration);
+					}).catch(function(error) {
+						console.log('Service worker registration failed:', error);
+					});
+				} else {
+				console.log('Service workers are not supported.');
+			}
+
+		}
+	</script>
+
+</head>
+<body onload="">
+		<!--
+		<h2>Currency Converter</h2>
+		<label for="">From Currency</label>
+		<input type="text" class="form-control" id="fromCurrency" name="fromCurrency" value=""><br>
+
+		<label for="">To Currency</label>
+		<input type="text" name="toCurrency" id="toCurrency" class="form-control"  value=""><br>
+
+	<input type="submit" onsubmit="postFrom()" name="" class="btn btn-primary" value="Convert"> -->
+<h2 class="text-center">Currency Converter</h2>
+	<div class="form-group">
+		<label for="amount">Amount</label>
+		<input type="text" class="form-control" name="amount" id="amount" value=""><br>
+
+	  <label for="fromCurrency">From:</label>
+	  <select class="form-control" name="fromCurrency" id="fromCurrency">
+
+	  </select><br>
+
+		<label for="toCurrency">To:</label>
+		 <select class="form-control" name="toCurrency" id="toCurrency">
+
+		 </select><br>
+		 <br>
+		 <br>
+		 <label for="convertedTotal">Converted Total</label>
+		 <input type="text" id="convertedTotal" class="form-control" value="">
+		 <br>
+		 <input type="submit" class="btn btn-info" onclick="convertCurr()" name="submit" value="Convert">
+</div>
+
+		<!-- <button type="button" name="button" onclick="UserAction()">Convert</button> -->
+	<p id="demo"></p>
+
+	<footer>
+	</footer>
+	<script>
+
+	// fetch('http://free.currencyconverterapi.com/api/v5/countries')
+  // .then(function(response) {
+	//
+	// 	return response.json();;
+  //   //return results;
+  // })
+  // .then(function(myJson) {
+  //   console.log(myJson.results.ALL);
+  // }).catch(function(error){
+	// 	console.log('error occurred', error);
+	// });
+	fetch('http://free.currencyconverterapi.com/api/v5/currencies')
+  .then(response => {
+    return response.json();
+  })
+  .then(currencies => {
+		let output = '';
+
+			//console.log(Object.keys(currencies.results));
+			let keys = Object.keys(currencies.results);
+			for (let i = 0; i< keys.length;i++){
+				//console.log(currencies.results[keys[i]].currencyName);
+				let currName = currencies.results[keys[i]].currencyName;
+				output += '<option>'+keys[i]+' - '+ currName+'</option>'
+			}
+			document.getElementById('fromCurrency').innerHTML = output;
+			document.getElementById('toCurrency').innerHTML = output;
+			//output += '<option>'+ currencies+'</option>';
+		// document.getElementById('fromCurrency').innerHTML.value = output;
+    //console.log(currencies.results);
+  });
+
+	function convertCurr(){
+		let amountToConvert = document.getElementById('amount').value;
+		let fromCurr = document.getElementById('fromCurrency').value.substring(0, 3);
+		let toCurr = document.getElementById('toCurrency').value.substring(0, 3);
+		let finalTotal  = document.getElementById('convertedTotal');
+		let query = fromCurr + '_' + toCurr;
+		let url = "https://free.currencyconverterapi.com/api/v5/convert?q="+ query +"&compact=ultra";
+		console.log(fromCurr);
+		fetch(url).then(response => {
+			return response.json();
+		}).then(rate => {
+			console.log(rate);
+			convRate = Object.values(rate)[0];
+			console.log(convRate);
+			let total = (amountToConvert * convRate);
+			console.log(total);
+			finalTotal.value = total;
+		}).catch(error => {
+			console.log("Error occured", error);
+		});
+
+
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	function UserAction() {
+		let from = encodeURIComponent(document.getElementById('fromCurrency').value);
+		let to = encodeURIComponent(document.getElementById('toCurrency').value);
+		const query = from + '_' + to;
+		var urlToConvert = "https://free.currencyconverterapi.com/api/v5/convert?q="+ query +"&compact=ultra";
+
+		var xttp = new XMLHttpRequest();
+		var response = JSON.parse(xttp.responseText);
+		xttp.open("GET", urlToConvert, true);
+		xttp.send();
+
+		console.log(response);
+
+		//
+		// var xhttp = new XMLHttpRequest();
+		// 	xhttp.onreadystatechange = function() {
+		// 	    if (this.readyState == 4 && this.status == 200) {
+		// // 	       // Typical action to be performed when the document is ready:
+		// // 	       //
+		// 	       var response = JSON.parse(xhttp.responseText);
+		// // 				 //var results =  response.results;
+		// // 				 //document.getElementById("root").innerHTML = xhttp.responseText;
+		// // 	       //var currName = JSON.stringify(response.currencyName);
+		// //
+		// 	    console.log(JSON.stringify(response));
+		// 	}
+		// };
+		// // var urlToOpen = "http://free.currencyconverterapi.com/api/v5/convert?q=USD_NGN,NGN_USD&compact=ultra";
+		// xhttp.open("GET", urlToConvert, true);
+		// xhttp.send();
+}
+
+//__Copied from Web (Didn't work for me)
+    // var xhttp = new XMLHttpRequest();
+    //xhttp.open("GET", urlToConvert, true);
+    //xhttp.setRequestHeader("Content-type", "application/json");
+    //xhttp.send();
+    //var response = JSON.parse(xhttp.responseText);
+		//console.log(response);
+
+
+		// var xhttp = new XMLHttpRequest();
+		// 	xhttp.onreadystatechange = function() {
+		// 	    if (this.readyState == 4 && this.status == 200) {
+		// 	       // Typical action to be performed when the document is ready:
+		// 	       //
+		// 	       var response = JSON.parse(xhttp.responseText);
+		// 				 //var results =  response.results;
+		// 				 //document.getElementById("root").innerHTML = xhttp.responseText;
+		// 	       //var currName = JSON.stringify(response.currencyName);
+		//
+		// 	    console.log(response);
+		// 	}
+		// };
+		// var urlToOpen = "http://free.currencyconverterapi.com/api/v5/convert?q=USD_NGN,NGN_USD&compact=ultra";
+		// xhttp.open("GET", urlToOpen, true);
+		// xhttp.send();
+
+
+
+
+	</script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+</body>
+</html>
